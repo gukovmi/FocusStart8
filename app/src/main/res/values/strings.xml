@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">FocusStart8</string>
+    <string name="title_edit_text">input title</string>
+    <string name="description_edit_text">input description</string>
+    <string name="take_photo_button">take photo</string>
+
+</resources>
