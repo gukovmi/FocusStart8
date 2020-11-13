@@ -9,7 +9,12 @@ import android.provider.MediaStore
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
-import com.example.focusstart8.data.ImgurApiService
+import com.example.focusstart8.data.Constants.CONTENT_TYPE
+import com.example.focusstart8.data.Constants.FILE_NAME
+import com.example.focusstart8.data.Constants.FILE_TYPE
+import com.example.focusstart8.data.Constants.IMAGE_TYPE
+import com.example.focusstart8.data.Constants.PROVIDER_AUTHORITY
+import com.example.focusstart8.data.network.ImgurApiService
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
@@ -46,7 +51,7 @@ class MainActivity : AppCompatActivity() {
             disposable = imgurApiService.postImage(
                 titleEditText.text.toString(),
                 descriptionEditText.text.toString(),
-                "file",
+                IMAGE_TYPE,
                 getPartFile()
             )
                 .subscribeOn(Schedulers.io())
@@ -62,10 +67,11 @@ class MainActivity : AppCompatActivity() {
     private fun savePhoto() {
         val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
 
-        photoFile = File.createTempFile("test", ".jpg", Environment.getExternalStorageDirectory())
+        photoFile =
+            File.createTempFile(FILE_NAME, ".jpg", Environment.getExternalStorageDirectory())
         outputPhotoUri = FileProvider.getUriForFile(
             this@MainActivity,
-            "com.example.focusstart8.provider",
+            PROVIDER_AUTHORITY,
             photoFile
         )
         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputPhotoUri)
@@ -73,9 +79,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getPartFile(): MultipartBody.Part = MultipartBody.Part.createFormData(
-        "image",
+        FILE_TYPE,
         photoFile.name,
-        RequestBody.create("multipart/form-data".toMediaTypeOrNull(), photoFile)
+        RequestBody.create(CONTENT_TYPE.toMediaTypeOrNull(), photoFile)
     )
 
     override fun onDestroy() {

@@ -1,4 +1,4 @@
-package com.example.focusstart8.data
+package com.example.focusstart8.data.models
 
 data class ImageUploadResponse(
     val data: Data,

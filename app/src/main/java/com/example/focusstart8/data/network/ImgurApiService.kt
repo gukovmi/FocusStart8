@@ -1,6 +1,7 @@
-package com.example.focusstart8.data
+package com.example.focusstart8.data.network
 
-import com.example.focusstart8.data.Constants.BEARER_TOKEN
+import com.example.focusstart8.data.Constants
+import com.example.focusstart8.data.models.ImageUploadResponse
 import io.reactivex.Single
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
@@ -8,14 +9,12 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.Headers
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
 
 interface ImgurApiService {
     @Multipart
-    @Headers("Authorization: Bearer $BEARER_TOKEN")
     @POST("upload")
     fun postImage(
         @Part("title") title: String,
@@ -25,11 +24,13 @@ interface ImgurApiService {
     ): Single<ImageUploadResponse>
 
     companion object {
+
         fun create(): ImgurApiService {
             val interceptor = HttpLoggingInterceptor()
             interceptor.level = HttpLoggingInterceptor.Level.BODY
             val client = OkHttpClient.Builder()
                 .addInterceptor(interceptor)
+                .addInterceptor(AuthorizationInterceptor())
                 .build()
             val retrofit = Retrofit.Builder()
                 .baseUrl(Constants.BASE_URL)
